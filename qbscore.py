@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLabel
 
 class qbGui(QMainWindow):
     def __init__(self):
