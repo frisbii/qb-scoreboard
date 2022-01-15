@@ -28,10 +28,15 @@ class qbGui(QMainWindow):
 
         self.generalLayout = QVBoxLayout()
         self._centralWidget = QWidget(self)
+
+        #self._centralWidget.setAttribute(Qt.WA_StyledBackground, True)
+        #self._centralWidget.setStyleSheet("background-color:yellow")
+
         self.setCentralWidget(self._centralWidget)
         self._centralWidget.setLayout(self.generalLayout)
 
         self._createScoreboard()
+        self.generalLayout.addStretch()
         self._createButtons()
 
     def _createScoreboard(self):
@@ -45,16 +50,9 @@ class qbGui(QMainWindow):
         self.scoreboard.addLayout(self.rounds, 1)
 
         # Creating the player columns
-        self.players = {}
         playerNames = ["Maritte", "Safina", "Gilda", "Petronella"]
         for name in playerNames:
-            self.players[name] = QHBoxLayout()
-            nameHeader = QLabel(name)
-            nameHeader.setStyleSheet("background-color:#DAE3F3; font-weight:bold; font-size:30px")
-            self.players[name].addWidget(nameHeader)
-
-        for name, layout in self.players.items():
-            self.scoreboard.addLayout(layout, 3)
+            self.scoreboard.addWidget(player(name), 3)
 
         # Adding the scoreboard to the general layout
         self.generalLayout.addLayout(self.scoreboard)
@@ -73,17 +71,19 @@ class qbGui(QMainWindow):
 class player(QWidget):
     def __init__(self, name):
         super().__init__()
-        self._name = name
-        set.setLayout(QVBoxLayout())
+        #self.setAttribute(Qt.WA_StyledBackground, True)
+        #self.setStyleSheet("background-color:red")
+        self.objectName = name
+        self.playerLayout = QVBoxLayout()
 
         self._createLabel()
-        self._createScoring()
-        self._createStats()
 
-    def _createLabel():
-        self.nameHeader = QLabel(self._name)
+        self.setLayout(self.playerLayout)
+
+    def _createLabel(self):
+        self.nameHeader = QLabel(self.objectName)
         self.nameHeader.setStyleSheet("background-color:#DAE3F3; font-weight:bold; font-size:30px")
-        self.addWidget(self.nameHeader)
+        self.playerLayout.addWidget(self.nameHeader)
 
 def main():
     # Create instance of QApplication
