@@ -76,44 +76,49 @@ class qbGui(QMainWindow):
 
         # Creating the round number column
         self.rounds = QVBoxLayout()
-        roundHeader = QLabel("Round")
-        roundHeader.setStyleSheet("font-size:16px")
-        self.rounds.addWidget(roundHeader)
+        self.roundHeader = QLabel("Round")
+        self.roundHeader.setStyleSheet("font-size:16px")
+        self.rounds.addWidget(self.roundHeader)
         # self.scoreboard.addLayout(self.rounds, 1) !!! <<< round num column disabled for now
 
         # Creating the player columns
+        self.playerObjects = {}
         playerNames = ["Maritte", "Safina", "Gilda", "Petronella"]
         for i, name in enumerate(playerNames):
-            # Adds a new player widget to the scoreboard for every passed player
-            self.scoreboard.addWidget(player(name, i), 3)
+            self.playerObjects[name] = player(name, i)
+            self.scoreboard.addWidget(self.playerObjects[name], 3)
 
         # Adding the scoreboard to the general layout
         self.generalLayout.addLayout(self.scoreboard)
 
     def _createNavButtons(self):
         """Creates the navigation buttons at the bottom of the main window"""
-        self.buttons = QHBoxLayout()
+        self.navButtons = QHBoxLayout()
 
+        self.navObjects = {}
         for l in ["Back", "Continue"]:
             button = QPushButton(l)
+            self.navObjects[l] = button
             button.setFixedHeight(50)
-            self.buttons.addWidget(button)
+            self.navButtons.addWidget(button)
 
-        self.generalLayout.addLayout(self.buttons)
+        self.generalLayout.addLayout(self.navButtons)
+
 
     def _createStatusBar(self):
         status = QStatusBar()
         status.showMessage("Round 1")
         self.setStatusBar(status)
 
+
 class player(QWidget):
     """Defines the player columns of the scoreboard"""
-    def __init__(self, name, number):
+    def __init__(self, name, num):
         """Player widget initialization"""
         super().__init__()
         # Gives the player widget object a name and number
         self.objectName = name
-        self.playerNumber = number
+        self.playerNumber = num
 
         # Sets a background colour for the player widget
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -146,18 +151,19 @@ class player(QWidget):
         self.stats = QHBoxLayout()
 
         # Creates the two columns of stats using the QForm layout
+        self.statsObjects = {}
         self.col1Stats = QFormLayout()
         self.col2Stats = QFormLayout()
         for i, col in enumerate([["TUC", "TN", "TUA"], ["BC", "BA", "TS"]]):
-            for l in col:
-                stat = QLineEdit()
-                stat.objectName = l
-                stat.setAlignment(Qt.AlignCenter)
-                stat.setReadOnly(True)
+            for statName in col:
+                statDisp = QLineEdit()
+                self.statsObjects[statName] = statDisp
+                statDisp.setAlignment(Qt.AlignCenter)
+                statDisp.setReadOnly(True)
                 if i == 0:
-                    self.col1Stats.addRow(l, stat)
+                    self.col1Stats.addRow(statName, statDisp)
                 else:
-                    self.col2Stats.addRow(l, stat)
+                    self.col2Stats.addRow(statName, statDisp)
 
         self.stats.addLayout(self.col1Stats)
         self.stats.addLayout(self.col2Stats)
@@ -168,10 +174,11 @@ class player(QWidget):
         """Creates the scoring buttons and checkboxes"""
         self.scoring = QHBoxLayout()
 
+        self.scoringObjects = {}
         # Creates a button for each point value of a tossup
         for p in ["-5", "10", "15"]:
             button = QPushButton(p)
-            button.objectName = p
+            self.scoringObjects[p] = button
             button.setCheckable(True)
             # Sets negs to be red if selected and correct points to be green
             if p == "-5":
@@ -181,12 +188,35 @@ class player(QWidget):
             self.scoring.addWidget(button)
 
         # Creates a checkbox for each bonus question
-        for i in ["1", "2", "3"]:
+        for q in ["b1", "b2", "b3"]:
             check = QCheckBox()
-            check.objectName = i
+            self.scoringObjects[q] = check
             self.scoring.addWidget(check)
 
         self.playerLayout.addLayout(self.scoring)
+
+
+    def setStatsText(self, stat, value):
+        self.statsObjects[stat].setText(value)
+
+    def resetScoring(self):
+        for label in self.scoringObjects:
+            self.scoringObjects[label].setChecked(False)
+
+
+class qbController:
+    """Controller portion of the program"""
+    def __init__(self, model, view):
+        """Controller initializer"""
+        self._view = view
+
+        self._connectSignals()
+
+    def _connectSignals(self):
+        """Connect signals and slots"""
+        # self.navObjects["Continue"].clicked.connect(self.playerObjects["Maritte"].resetScoring)
+        for playerObj in self._view.playerObjects:
+            continue
 
 def main():
     # Create instance of QApplication
@@ -198,6 +228,8 @@ def main():
     # Show the GUI
     view = qbGui()
     view.show()
+    # Create instances of the model and the controller
+    qbController("", view=view)
 
     # Execute the program event loop
     sys.exit(app.exec_())
