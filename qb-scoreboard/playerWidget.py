@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QPushButton,
     QLabel,
-    QCheckBox
+    QCheckBox,
+    QButtonGroup
 )
 
 PLAYER_COLOURS = {
@@ -32,6 +33,7 @@ class player(QWidget):
         # Gives the player widget object a name and number
         self.objectName = name
         self.playerNumber = num
+        self.scorecard = {}
 
         # Sets a background colour for the player widget
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -45,7 +47,6 @@ class player(QWidget):
         self._createLabel()
         self._createStats()
         self._createScoring()
-
         self.setLayout(self.playerLayout)
 
     def _createLabel(self):
@@ -67,7 +68,7 @@ class player(QWidget):
         self.statsObjects = {}
         self.col1Stats = QFormLayout()
         self.col2Stats = QFormLayout()
-        for i, col in enumerate([["TUC", "TN", "TUA"], ["BC", "BA", "TS"]]):
+        for i, col in enumerate([["TUC", "TUN", "TUA"], ["BC", "PPTU", "TS"]]):
             for statName in col:
                 statDisp = QLineEdit()
                 self.statsObjects[statName] = statDisp
@@ -87,30 +88,31 @@ class player(QWidget):
         """Creates the scoring buttons and checkboxes"""
         self.scoring = QHBoxLayout()
 
-        self.scoringObjects = {}
         # Creates a button for each point value of a tossup
+        self.tossupButtons = QButtonGroup()
         for p in ["-5", "10", "15"]:
             button = QPushButton(p)
-            self.scoringObjects[p] = button
             button.setCheckable(True)
             # Sets negs to be red if selected and correct points to be green
             if p == "-5":
                 button.setStyleSheet("QPushButton:checked{background-color:#f55442; border:1px solid; border-radius:6px; padding: 6px}")
             else:
                 button.setStyleSheet("QPushButton:checked{background-color:#54f542; border:1px solid; border-radius:6px; padding: 6px}")
+            self.tossupButtons.addButton(button, int(p))
             self.scoring.addWidget(button)
 
         # Creates a checkbox for each bonus question
-        for q in ["b1", "b2", "b3"]:
+        self.bonusButtons = QButtonGroup()
+        self.bonusButtons.setExclusive(False)
+        for i in ["1", "2", "3"]:
             check = QCheckBox()
-            self.scoringObjects[q] = check
+            self.bonusButtons.addButton(check, int(i))
             self.scoring.addWidget(check)
 
         self.playerLayout.addLayout(self.scoring)
 
-
     def setStatsText(self, stat, value):
-        self.statsObjects[stat].setText(value)
+        self.statsObjects[stat].setText(str(value))
 
     def resetScoring(self):
         for label in self.scoringObjects:
