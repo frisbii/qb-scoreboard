@@ -19,6 +19,7 @@ PLAYER_COLOURS = {
     3: "hsl(24, 82%, x)",
     4: "hsl(170, 0%, x)",
     5: "hsl(280, 70%, x)"
+    6: "hsl(129, 62%, x)"
 }
 """ placeholder
     0: "#DAE3F3",
