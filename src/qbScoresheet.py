@@ -54,7 +54,7 @@ class qbGui(QMainWindow):
         self._createNavButtons()
         self._createStatusBar()
 
-        self.setFixedWidth(350 * len(self.playerObjects))
+        self.setFixedWidth(280 * len(self.playerObjects))
 
     def _createMenu(self):
         """Creates the menu bar of the central window"""
@@ -68,7 +68,7 @@ class qbGui(QMainWindow):
 
         # Creating the player columns
         self.playerObjects = {}
-        playerNames = ["Maritte", "Safina", "Gilda"]
+        playerNames = ["Brock", "Racqella", "Zhen", "Isabel", "Gavin", "Bravo", "Charlie"]
         for i, name in enumerate(playerNames):
             self.playerObjects[name] = player(name, i)
             self.playerspace.addWidget(self.playerObjects[name], 3)
